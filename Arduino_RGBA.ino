@@ -1,4 +1,5 @@
 #include "FastLED.h"
+#include "intcos.hpp"
 
 #define ANALOG_READ_PIN  ( A0 )
 
@@ -43,6 +44,7 @@ typedef enum
 typedef enum
 {
     sm_system_off,
+    sm_static_red,
     sm_thermal,
     sm_torrent,
     sm_night,
@@ -75,6 +77,7 @@ void copy_led_data(CRGB src[], CRGB dest[], uint8_t len);
 void debug(void);
 #endif
 
+/* STATE ABSTRACT CLASS --------------------------------------------------------------------------- */
 class StateAbstract
 {
 public:
@@ -82,9 +85,10 @@ public:
     virtual void get_led_states(CRGB cpu_leds[], CRGB led_strip_leds[], CRGB front_fans_leds[]) const = 0;
     virtual void check_if_state_should_change(void) const = 0;
 };
-
+/* OFF STATE -------------------------------------------------------------------------------------- */
 class StateOff : public StateAbstract
 {
+public:
     void button_press_action(void) const override;
     void get_led_states(CRGB cpu_leds[], CRGB led_strip_leds[], CRGB front_fans_leds[]) const override;
     void check_if_state_should_change(void) const override;
@@ -120,6 +124,46 @@ void StateOff::check_if_state_should_change(void) const
     if (current_pc_state == pc_on)
         system_set_state(DEFAULT_MODE);
 }
+/* STATIC RED STATE ------------------------------------------------------------------------------- */
+class StateStaticRed : public StateAbstract
+{
+public:
+    void button_press_action(void) const override;
+    void get_led_states(CRGB cpu_leds[], CRGB led_strip_leds[], CRGB front_fans_leds[]) const override;
+    void check_if_state_should_change(void) const override;
+};
+void StateStaticRed::button_press_action(void) const
+{
+    // Do nothing (yet)
+}
+void StateStaticRed::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
+{
+    for (uint8_t led_index = 0; led_index < CPU_COOLER_NUM_LEDS; ++led_index)
+    {
+        cpu_leds[led_index].red = 200;
+        cpu_leds[led_index].green = 0;
+        cpu_leds[led_index].blue = 0;
+    }
+    for (uint8_t led_index = 0; led_index < LED_STRIP_NUM_LEDS; ++led_index)
+    {
+        led_strip_leds[led_index].red = 200;
+        led_strip_leds[led_index].green = 0;
+        led_strip_leds[led_index].blue = 0;
+    }
+    for (uint8_t led_index = 0; led_index < LED_STRIP_NUM_LEDS; ++led_index)
+    {
+        front_fans_leds[led_index].red = 200;
+        front_fans_leds[led_index].green = 0;
+        front_fans_leds[led_index].blue = 0;
+    }
+}
+void StateStaticRed::check_if_state_should_change(void) const
+{
+    pc_state_t current_pc_state = get_pc_state();
+    if (current_pc_state == pc_off)
+        system_set_state(sm_system_off);
+}
+
 
 void setup()
 {
@@ -141,13 +185,6 @@ void setup()
 void loop()
 {
     unsigned long loop_start_time = millis();
-
-    // pc_state_t pc_state = get_pc_state();
-
-    // if (pc_state == pc_off)
-    //     system_sleep();
-    // else if (pc_state == pc_on)
-    //     system_wake();
 
     system_update();
 
@@ -171,18 +208,6 @@ void system_set_state(system_state_t new_state)
     sm_current_state = new_state;
 }
 
-// void system_wake(void) 
-// {
-//     if (sm_current_state == sm_system_off)
-//         system_set_state(DEFAULT_MODE);
-// }
-
-// void system_sleep(void)
-// {
-//     if (sm_current_state != sm_system_off)
-//         system_set_state(sm_system_off);
-// }
-
 void system_update(void)
 {
     static uint8_t transition_stage;
@@ -191,6 +216,7 @@ void system_update(void)
     static CRGB front_fans_transition_start[FRONT_FANS_NUM_LEDS];
 
     static StateOff state_off_obj;
+    static StateStaticRed state_static_red_obj;
 
     if (sm_current_state != sm_previous_state)
     {
@@ -198,24 +224,9 @@ void system_update(void)
         transition_stage = TRANSITION_CYCLES;
         sm_previous_state = sm_current_state;
 
-        for (uint8_t led_index = 0; led_index < CPU_COOLER_NUM_LEDS; ++led_index)
-        {
-            cpu_cooler_transition_start[led_index].red = cpu_cooler_leds[led_index].red;
-            cpu_cooler_transition_start[led_index].green = cpu_cooler_leds[led_index].green;
-            cpu_cooler_transition_start[led_index].blue = cpu_cooler_leds[led_index].blue;
-        }
-        for (uint8_t led_index = 0; led_index < LED_STRIP_NUM_LEDS; ++led_index)
-        {
-            led_strip_transition_start[led_index].red = led_strip_leds[led_index].red;
-            led_strip_transition_start[led_index].green = led_strip_leds[led_index].green;
-            led_strip_transition_start[led_index].blue = led_strip_leds[led_index].blue;
-        }
-        for (uint8_t led_index = 0; led_index < FRONT_FANS_NUM_LEDS; ++led_index)
-        {
-            front_fans_transition_start[led_index].red = front_fans_leds[led_index].red;
-            front_fans_transition_start[led_index].green = front_fans_leds[led_index].green;
-            front_fans_transition_start[led_index].blue = front_fans_leds[led_index].blue;
-        }
+        copy_led_data(cpu_cooler_leds, cpu_cooler_transition_start, CPU_COOLER_NUM_LEDS);
+        copy_led_data(led_strip_leds, led_strip_transition_start, CPU_COOLER_NUM_LEDS);
+        copy_led_data(front_fans_leds, front_fans_transition_start, CPU_COOLER_NUM_LEDS);
     }
 
     CRGB cpu_cooler_new_states[CPU_COOLER_NUM_LEDS];
@@ -224,6 +235,12 @@ void system_update(void)
 
     switch(sm_current_state)
     {
+        case sm_static_red:
+        {
+            state_off_obj.get_led_states(cpu_cooler_new_states, led_strip_new_states, front_fans_new_states);
+            state_off_obj.check_if_state_should_change();
+        }
+        break;
         case sm_thermal:
         {
 
@@ -242,110 +259,24 @@ void system_update(void)
         case sm_system_off:
         default:
         {
-            // state_off_obj.get_led_states();
+            state_static_red_obj.get_led_states(cpu_cooler_new_states, led_strip_new_states, front_fans_new_states);
+            state_static_red_obj.check_if_state_should_change();
         }
         break;        
     }
 
-
-
-    /*
-    All functions should be able to return an array (by pointer)
-    Slowly shift from one mode to another, maybe using sine wave
-
-    use sine wave to create the torrent colour gradient stuff
-    */
-
-    // if (sm_current_state != sm_previous_state)
-    // {
-
-    // }
-
-    // if (sm_current_state != sm_system_off)
-    // {
-    //     // CPU Cooler
-    //     for (int i = 0; i < CPU_COOLER_NUM_LEDS; ++i)
-    //     {
-    //         cpu_cooler_leds[i] = CRGB(255, 0, 0);
-    //     }
-    //     // LED Strip
-    //     for (int i = 0; i < LED_STRIP_NUM_LEDS; ++i)
-    //     {
-    //         led_strip_leds[i] = CRGB(255, 0, 0);
-    //     }
-    //     // Front fans
-    //     for (int i = 0; i < FRONT_FANS_NUM_LEDS; i++)
-    //     {
-    //         front_fans_leds[i] = CRGB(255, 0, 0);
-    //     }
-    // }
-    // else
-    // {
-    //     // CPU Cooler
-    //     for (int i = 0; i < CPU_COOLER_NUM_LEDS; i++)
-    //     {
-    //         cpu_cooler_leds[i] = CRGB(0, 0, 0);
-    //     }
-    //     // LED Strip
-    //     for (int i = 0; i < LED_STRIP_NUM_LEDS; i++)
-    //     {
-    //         led_strip_leds[i] = CRGB(0, 0, 0);
-    //     }
-    //     // Front fans
-    //     for (int i = 0; i < FRONT_FANS_NUM_LEDS; i++)
-    //     {
-    //         front_fans_leds[i] = CRGB(0, 0, 0);
-    //     }
-    // }
-    // FastLED.show();
+    // Update the actual LED data
+    
 }
 
-
-// void temp(void)
-// {
-//     // CPU Cooler
-//     for (int i = 0; i < CPU_COOLER_NUM_LEDS; i++)
-//     {
-//         cpu_cooler_leds[i] = CRGB(255 - ( 60 / (i + 1) ), 0, 0);
-//     }
-//     // LED Strip
-//     for (int i = 0; i < LED_STRIP_NUM_LEDS; i++)
-//     {
-//         led_strip_leds[i] = CRGB(0, 255 - ( 60 / (i + 1) ), 0);
-//     }
-//     // Front fans
-//     for (int i = 0; i < FRONT_FANS_NUM_LEDS; i++)
-//     {
-//         front_fans_leds[i] = CRGB(0, 0, 255 - ( 60 / (i + 1) ));
-//     }
-
-//     FastLED.show();
-// }
-
-// void leds_off(void)
-// {
-//     // CPU Cooler
-//     for (int i = 0; i < CPU_COOLER_NUM_LEDS; i++)
-//     {
-//         cpu_cooler_leds[i] = CRGB(0, 0, 0);
-//     }
-//     // LED Strip
-//     for (int i = 0; i < LED_STRIP_NUM_LEDS; i++)
-//     {
-//         led_strip_leds[i] = CRGB(0, 0, 0);
-//     }
-//     // Front fans
-//     for (int i = 0; i < FRONT_FANS_NUM_LEDS; i++)
-//     {
-//         front_fans_leds[i] = CRGB(0, 0, 0);
-//     }
-
-//     FastLED.show();
-// }
-
-void copy_led_data(CRGB src[], CRGB dest[], uint8_t len)
+void copy_led_data(CRGB *src, CRGB *dest, uint8_t len)
 {
-
+    for (uint8_t index = 0U; index < len; ++index)
+    {
+        dest[index].red = src[index].red;
+        dest[index].green = src[index].green;
+        dest[index].blue = src[index].blue;
+    }
 }
 
 #if defined(DEBUG) && (DEBUG == 1)
