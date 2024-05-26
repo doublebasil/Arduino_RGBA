@@ -7,7 +7,8 @@
 
 void StateTorrent::button_press_action(void) const
 {
-    // Do nothing (yet)
+    // Change to static red
+    StateAbstract::current_state = sm_static_red;
 }
 void StateTorrent::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
 {

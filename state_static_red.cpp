@@ -2,21 +2,26 @@
 
 void StateStaticRed::button_press_action(void) const
 {
-    // Do nothing (yet)
+    // Change to Torrent
+    StateAbstract::current_state = sm_torrent;
 }
 void StateStaticRed::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
 {
-    for (uint8_t led_index = 0; led_index < CPU_COOLER_NUM_LEDS; ++led_index)
+    for (uint8_t led_index = 0U; led_index < CPU_COOLER_INNER_NUM_LEDS; ++led_index)
     {
-        cpu_leds[led_index] = CRGB(200, 0, 0);
+        cpu_leds[led_index] = CRGB(0, 0, 0);
+    }
+    for (uint8_t led_index = 0U; led_index < CPU_COOLER_OUTER_NUM_LEDS; ++led_index)
+    {
+        cpu_leds[CPU_COOLER_INNER_NUM_LEDS + led_index] = CRGB(50, 0, 0);
     }
     for (uint8_t led_index = 0; led_index < LED_STRIP_NUM_LEDS; ++led_index)
     {
-        led_strip_leds[led_index] = CRGB(200, 0, 0);
+        led_strip_leds[led_index] = CRGB(50, 0, 0);
     }
     for (uint8_t led_index = 0; led_index < FRONT_FANS_NUM_LEDS; ++led_index)
     {
-        front_fans_leds[led_index] = CRGB(200, 0, 0);
+        front_fans_leds[led_index] = CRGB(50, 0, 0);
     }
 }
 void StateStaticRed::check_if_state_should_change(void) const

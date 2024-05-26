@@ -22,8 +22,13 @@ CRGB cpu_cooler_leds[CPU_COOLER_NUM_LEDS];
 CRGB led_strip_leds[LED_STRIP_NUM_LEDS];
 CRGB front_fans_leds[FRONT_FANS_NUM_LEDS];
 
-void system_update(void);
+typedef enum
+{
+    button_pressed,
+    button_not_pressed,
+} button_state_t;
 
+void system_update(void);
 
 void setup()
 {
@@ -31,6 +36,7 @@ void setup()
     delay(250);
 
     pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(RESET_BUTTON_INPUT_PIN, INPUT_PULLUP);
 
     FastLED.addLeds<NEOPIXEL, CPU_COOLER_DATA_PIN>(cpu_cooler_leds, CPU_COOLER_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, LED_STRIP_DATA_PIN>(led_strip_leds, LED_STRIP_NUM_LEDS);
@@ -63,6 +69,49 @@ void system_update(void)
     static StateOff state_off_obj;
     static StateStaticRed state_static_red_obj;
     static StateTorrent state_torrent_obj;
+
+    static button_state_t current_button_state;
+    static button_state_t previous_button_state = button_not_pressed;
+
+    current_button_state = (digitalRead(RESET_BUTTON_INPUT_PIN) == LOW) ? button_pressed : button_not_pressed;
+    if ((current_button_state == button_pressed) && (previous_button_state == button_not_pressed))
+    {
+        switch(StateAbstract::current_state)
+        {
+            case sm_static_red:
+            {
+                state_static_red_obj.button_press_action();
+            }
+            break;
+            case sm_thermal:
+            {
+
+            }
+            break;
+            case sm_torrent:
+            {
+                state_torrent_obj.button_press_action();
+            }
+            break;
+            case sm_lava_lamp:
+            {
+
+            }
+            break;
+            case sm_night:
+            {
+
+            }
+            break;
+            case sm_system_off:
+            default:
+            {
+                state_off_obj.button_press_action();
+            }
+            break;        
+        }
+    }
+    previous_button_state = current_button_state;
 
     if (StateAbstract::current_state != StateAbstract::previous_state)
     {

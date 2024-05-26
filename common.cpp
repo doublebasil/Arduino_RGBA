@@ -3,8 +3,8 @@
 
 pc_state_t get_pc_state(void)
 {
-    int analog_reading = analogRead(ANALOG_READ_PIN);
-    if (analog_reading < ANALOG_THRESHOLD)
+    int analog_reading = analogRead(POWER_BUTTON_ADC_PIN);
+    if (analog_reading < POWER_BUTTON_ADC_THRESHOLD)
         return pc_on;
     else
         return pc_off;
