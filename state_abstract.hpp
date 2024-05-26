@@ -15,6 +15,13 @@ public:
     static uint64_t ms_since_boot;
     static system_state_t current_state;
     static system_state_t previous_state;
+
+    static uint16_t cpu_cooler_inner_degrees[CPU_COOLER_INNER_NUM_LEDS];
+    static uint16_t cpu_cooler_outer_degrees[CPU_COOLER_OUTER_NUM_LEDS];
+    static uint16_t led_strip_degrees[LED_STRIP_NUM_LEDS];
+    static uint16_t front_fan_degrees[FRONT_FANS_NUM_LEDS];
+
+    StateAbstract();
 };
 
 #endif // ndef STATE_ABSTRACT_HPP

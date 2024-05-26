@@ -17,7 +17,9 @@
 #define LED_STRIP_NUM_LEDS        ( 7 )
 #define FRONT_FANS_NUM_LEDS       ( 12 )
 
-#define DEFAULT_MODE              ( sm_static_red ) // I want to get rid of this at some point
+#define DEFAULT_MODE              ( sm_torrent ) // I want to get rid of this at some point
+
+#include "FastLED.h"
 
 typedef enum
 {
@@ -36,5 +38,6 @@ typedef enum
 } pc_state_t;
 
 pc_state_t get_pc_state(void);
+void copy_led_data(CRGB src[], CRGB dest[], uint8_t len);
 
 #endif // ndef COMMON_HPP

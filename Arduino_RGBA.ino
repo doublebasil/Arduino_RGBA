@@ -5,6 +5,7 @@
 #include "state_abstract.hpp"
 #include "state_off.hpp"
 #include "state_static_red.hpp"
+#include "state_torrent.hpp"
 
 /*
 LED Layout for my Fractal Torrent build
@@ -22,7 +23,7 @@ CRGB led_strip_leds[LED_STRIP_NUM_LEDS];
 CRGB front_fans_leds[FRONT_FANS_NUM_LEDS];
 
 void system_update(void);
-void copy_led_data(CRGB src[], CRGB dest[], uint8_t len);
+
 
 void setup()
 {
@@ -34,8 +35,6 @@ void setup()
     FastLED.addLeds<NEOPIXEL, CPU_COOLER_DATA_PIN>(cpu_cooler_leds, CPU_COOLER_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, LED_STRIP_DATA_PIN>(led_strip_leds, LED_STRIP_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, FRONT_FANS_DATA_PIN>(front_fans_leds, FRONT_FANS_NUM_LEDS);
-
-    // Serial.begin(9600);
 }
 
 void loop()
@@ -63,6 +62,7 @@ void system_update(void)
 
     static StateOff state_off_obj;
     static StateStaticRed state_static_red_obj;
+    static StateTorrent state_torrent_obj;
 
     if (StateAbstract::current_state != StateAbstract::previous_state)
     {
@@ -93,6 +93,12 @@ void system_update(void)
         }
         break;
         case sm_torrent:
+        {
+            state_torrent_obj.get_led_states(cpu_cooler_new_states, led_strip_new_states, front_fans_new_states);
+            state_torrent_obj.check_if_state_should_change();
+        }
+        break;
+        case sm_lava_lamp:
         {
 
         }
@@ -139,14 +145,4 @@ void system_update(void)
         --transition_stage;
 
     FastLED.show();  
-}
-
-void copy_led_data(CRGB *src, CRGB *dest, uint8_t len)
-{
-    for (uint8_t index = 0U; index < len; ++index)
-    {
-        dest[index].red = src[index].red;
-        dest[index].green = src[index].green;
-        dest[index].blue = src[index].blue;
-    }
 }

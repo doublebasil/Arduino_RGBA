@@ -9,3 +9,13 @@ pc_state_t get_pc_state(void)
     else
         return pc_off;
 }
+
+void copy_led_data(CRGB *src, CRGB *dest, uint8_t len)
+{
+    for (uint8_t index = 0U; index < len; ++index)
+    {
+        dest[index].red = src[index].red;
+        dest[index].green = src[index].green;
+        dest[index].blue = src[index].blue;
+    }
+}

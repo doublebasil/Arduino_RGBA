@@ -9,21 +9,15 @@ void StateOff::get_led_states(CRGB cpu_leds[], CRGB led_strip_leds[], CRGB front
 {
     for (uint8_t led_index = 0; led_index < CPU_COOLER_NUM_LEDS; ++led_index)
     {
-        cpu_leds[led_index].red = 0;
-        cpu_leds[led_index].green = 0;
-        cpu_leds[led_index].blue = 0;
+        cpu_leds[led_index] = CRGB(0, 0, 0);
     }
     for (uint8_t led_index = 0; led_index < LED_STRIP_NUM_LEDS; ++led_index)
     {
-        led_strip_leds[led_index].red = 0;
-        led_strip_leds[led_index].green = 0;
-        led_strip_leds[led_index].blue = 0;
+        led_strip_leds[led_index] = CRGB(0, 0, 0);
     }
     for (uint8_t led_index = 0; led_index < FRONT_FANS_NUM_LEDS; ++led_index)
     {
-        front_fans_leds[led_index].red = 0;
-        front_fans_leds[led_index].green = 0;
-        front_fans_leds[led_index].blue = 0;
+        front_fans_leds[led_index] = CRGB(0, 0, 0);
     }
 }
 
