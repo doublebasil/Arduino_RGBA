@@ -11,6 +11,7 @@ uint16_t StateAbstract::front_fan_degrees[FRONT_FANS_NUM_LEDS];
 
 StateAbstract::StateAbstract()
 {
+    // Calculate the approximate angle each of the LEDs will be at (used for gradients)
     for (uint8_t led_number = 0U; led_number < CPU_COOLER_INNER_NUM_LEDS; ++led_number)
     {
         StateAbstract::cpu_cooler_inner_degrees[led_number] = (360UL * led_number) / CPU_COOLER_INNER_NUM_LEDS;

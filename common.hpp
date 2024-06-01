@@ -10,8 +10,13 @@
 #define LED_STRIP_DATA_PIN          ( 11 )
 #define FRONT_FANS_DATA_PIN         ( 10 )
 
-#define UPDATE_PERIOD_MS            ( 20 )
-#define TRANSITION_CYCLES           ( 1000 / UPDATE_PERIOD_MS )
+#define UPDATE_PERIOD_MS            ( 50 )
+#define TRANSITION_TIME_MS          ( 1000 )
+#define TRANSITION_CYCLES           ( TRANSITION_TIME_MS / UPDATE_PERIOD_MS )
+
+#define NUM_OF_TEMP_READINGS        ( 3 )
+#define TEMP_READING_PERIOD_MS      ( 500 )
+#define SYS_CYCLES_PER_TEMP_READING ( TEMP_READING_PERIOD_MS / UPDATE_PERIOD_MS )
 
 #define CPU_COOLER_NUM_LEDS         ( 24 )
 #define CPU_COOLER_INNER_NUM_LEDS   ( 8 )
@@ -19,7 +24,7 @@
 #define LED_STRIP_NUM_LEDS          ( 7 )
 #define FRONT_FANS_NUM_LEDS         ( 12 )
 
-#define DEFAULT_MODE                ( sm_torrent ) // I want to get rid of this at some point
+#define DEFAULT_MODE                ( sm_torrent )
 
 #include "FastLED.h"
 
