@@ -10,13 +10,12 @@
 #define LED_STRIP_DATA_PIN          ( 11 )
 #define FRONT_FANS_DATA_PIN         ( 10 )
 
-#define UPDATE_PERIOD_MS            ( 50 )
+#define UPDATE_PERIOD_MS            ( 25 )
 #define TRANSITION_TIME_MS          ( 1000 )
 #define TRANSITION_CYCLES           ( TRANSITION_TIME_MS / UPDATE_PERIOD_MS )
 
-#define NUM_OF_TEMP_READINGS        ( 3 )
-#define TEMP_READING_PERIOD_MS      ( 500 )
-#define SYS_CYCLES_PER_TEMP_READING ( TEMP_READING_PERIOD_MS / UPDATE_PERIOD_MS )
+#define FAN_SPEED_MEASURE_PIN       ( A5 )
+#define NUM_OF_FAN_READINGS         ( 3 )
 
 #define CPU_COOLER_NUM_LEDS         ( 24 )
 #define CPU_COOLER_INNER_NUM_LEDS   ( 8 )
@@ -24,7 +23,7 @@
 #define LED_STRIP_NUM_LEDS          ( 7 )
 #define FRONT_FANS_NUM_LEDS         ( 12 )
 
-#define DEFAULT_MODE                ( sm_torrent )
+#define DEFAULT_MODE                ( sm_thermal )
 
 #include "FastLED.h"
 

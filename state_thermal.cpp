@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "state_thermal.hpp"
 #include "intcos.hpp"
+#include "fan_speed.hpp"
 
 #define ROTATION_DEGREES_PER_SECOND ( 2 )
 #define MS_PER_SECOND               ( 1000UL )
@@ -13,27 +14,24 @@ void StateThermal::button_press_action(void) const
 }
 void StateThermal::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
 {
-    uint8_t temperature_blend_val = 0;
+    // Serial.println(get_fan_speed());
+    uint16_t temperature_scale_val = map(get_fan_speed(), 197, 1024, 0, 511);
 
-    // float current_temp = get_temperature();
-    // uint8_t temperature_blend_val;
-    // if (current_temp < this->low_temp)
-    //     temperature_blend_val = 0x00;
-    // else if (current_temp > this->high_temp)
-    //     temperature_blend_val = 0xFF;
-    // else
-    // {
-    //     float working_val = (current_temp - this->low_temp) * (float) 0xFF;
-    //     working_val /= (this->high_temp - this->low_temp);
-    //     temperature_blend_val = (uint8_t) round(working_val);
-    // }
-    // Serial.print("Current temp = ");
-    // Serial.print(current_temp);
-    // Serial.print(", temperature_blend_val = ");
-    // Serial.println(temperature_blend_val);
+    const uint8_t temperature_blend_val = (temperature_scale_val > 255) ? (temperature_scale_val - 0xFF) & 0xFF : temperature_scale_val;
 
-    const CRGB light_colour = blend(cool_colour_light, hot_colour_light, temperature_blend_val);
-    const CRGB dark_colour = blend(cool_colour_dark, hot_colour_dark, temperature_blend_val);
+    CRGB light_colour;
+    CRGB dark_colour;
+
+    if (temperature_scale_val < 256)
+    {
+        light_colour = blend(cool_colour_light, med_colour_light, temperature_blend_val);
+        dark_colour = blend(cool_colour_dark, med_colour_dark, temperature_blend_val);
+    }
+    else
+    {
+        light_colour = blend(med_colour_light, hot_colour_light, temperature_blend_val);
+        dark_colour = blend(med_colour_dark, hot_colour_dark, temperature_blend_val);
+    }
 
     const uint16_t add_deg = ((StateAbstract::ms_since_boot * ROTATION_DEGREES_PER_SECOND) / MS_PER_SECOND) % DEGREES_PER_ROTATION;
 

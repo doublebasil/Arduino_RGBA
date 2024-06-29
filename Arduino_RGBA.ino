@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 
+#include "fan_speed.hpp"
+
 #include "state_abstract.hpp"
 #include "state_off.hpp"
 #include "state_static_red.hpp"
@@ -43,7 +45,7 @@ void setup()
     FastLED.addLeds<NEOPIXEL, LED_STRIP_DATA_PIN>(led_strip_leds, LED_STRIP_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, FRONT_FANS_DATA_PIN>(front_fans_leds, FRONT_FANS_NUM_LEDS);
 
-    // Serial.begin(9600);
+    Serial.begin(9600);
 }
 
 void loop()
@@ -54,7 +56,7 @@ void loop()
     StateAbstract::ms_since_boot += new_millis - loop_start_time;
     loop_start_time = new_millis;
 
-    system_update();
+    // system_update();
 
     unsigned long loop_duration = millis() - loop_start_time;
     // Serial.println(loop_duration);
@@ -79,6 +81,8 @@ void system_update(void)
 
     static button_state_t current_button_state;
     static button_state_t previous_button_state = button_not_pressed;
+
+    check_fan_speed();
 
     current_button_state = (digitalRead(RESET_BUTTON_INPUT_PIN) == LOW) ? button_pressed : button_not_pressed;
     if ((current_button_state == button_pressed) && (previous_button_state == button_not_pressed))
