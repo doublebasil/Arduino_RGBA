@@ -14,10 +14,40 @@ void StateThermal::button_press_action(void) const
 }
 void StateThermal::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
 {
-    // Serial.println(get_fan_speed());
-    uint16_t temperature_scale_val = map(get_fan_speed(), 197, 1024, 0, 511);
+    const uint16_t map_from_low = 300;
+    const uint16_t map_from_high = 550;
+    const uint16_t map_to_low = 0;
+    const uint16_t map_to_high = 511;
+    
+    uint16_t temperature_scale_val;
+    const uint16_t current_fan_speed = get_fan_speed();
+    if (current_fan_speed <= map_from_low)
+    {
+        temperature_scale_val = map_to_low;
+    }
+    else if (current_fan_speed >= map_from_high)
+    {
+        temperature_scale_val = map_to_high;
+    }
+    else
+    {
+        temperature_scale_val = map(current_fan_speed, map_from_low, map_from_high, map_to_low, map_to_high);
+    }
+    
+    Serial.print(current_fan_speed);
+    Serial.print(" ");
+    Serial.println(temperature_scale_val);
 
-    const uint8_t temperature_blend_val = (temperature_scale_val > 255) ? (temperature_scale_val - 0xFF) & 0xFF : temperature_scale_val;
+    // const uint8_t temperature_blend_val = (temperature_scale_val > 255) ? (temperature_scale_val - 0xFF) & 0xFF : temperature_scale_val;
+    uint8_t temperature_blend_val;
+    if (temperature_scale_val > 255)
+    {
+        temperature_blend_val = ((temperature_scale_val - 0xFF) > 0xFF) ? 0xFF : temperature_scale_val - 0xFF;
+    }
+    else
+    {
+        temperature_blend_val = temperature_scale_val;
+    }
 
     CRGB light_colour;
     CRGB dark_colour;
