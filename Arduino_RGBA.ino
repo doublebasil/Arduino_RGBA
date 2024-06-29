@@ -45,7 +45,7 @@ void setup()
     FastLED.addLeds<NEOPIXEL, LED_STRIP_DATA_PIN>(led_strip_leds, LED_STRIP_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, FRONT_FANS_DATA_PIN>(front_fans_leds, FRONT_FANS_NUM_LEDS);
 
-    Serial.begin(9600);
+    // Serial.begin(9600);
 }
 
 void loop()
@@ -56,7 +56,7 @@ void loop()
     StateAbstract::ms_since_boot += new_millis - loop_start_time;
     loop_start_time = new_millis;
 
-    // system_update();
+    system_update();
 
     unsigned long loop_duration = millis() - loop_start_time;
     // Serial.println(loop_duration);
