@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "state_thermal.hpp"
 #include "intcos.hpp"
-#include "temperature_sensor.hpp"
 
 #define ROTATION_DEGREES_PER_SECOND ( 2 )
 #define MS_PER_SECOND               ( 1000UL )
@@ -14,18 +13,20 @@ void StateThermal::button_press_action(void) const
 }
 void StateThermal::get_led_states(CRGB *cpu_leds, CRGB *led_strip_leds, CRGB *front_fans_leds) const
 {
-    float current_temp = get_temperature();
-    uint8_t temperature_blend_val;
-    if (current_temp < this->low_temp)
-        temperature_blend_val = 0x00;
-    else if (current_temp > this->high_temp)
-        temperature_blend_val = 0xFF;
-    else
-    {
-        float working_val = (current_temp - this->low_temp) * (float) 0xFF;
-        working_val /= (this->high_temp - this->low_temp);
-        temperature_blend_val = (uint8_t) round(working_val);
-    }
+    uint8_t temperature_blend_val = 0;
+
+    // float current_temp = get_temperature();
+    // uint8_t temperature_blend_val;
+    // if (current_temp < this->low_temp)
+    //     temperature_blend_val = 0x00;
+    // else if (current_temp > this->high_temp)
+    //     temperature_blend_val = 0xFF;
+    // else
+    // {
+    //     float working_val = (current_temp - this->low_temp) * (float) 0xFF;
+    //     working_val /= (this->high_temp - this->low_temp);
+    //     temperature_blend_val = (uint8_t) round(working_val);
+    // }
     // Serial.print("Current temp = ");
     // Serial.print(current_temp);
     // Serial.print(", temperature_blend_val = ");

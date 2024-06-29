@@ -2,7 +2,6 @@
 #define STATE_THERMAL_HPP
 
 #include "FastLED.h"
-#include <Adafruit_AHTX0.h>
 #include <stdint.h>
 #include "state_abstract.hpp"
 #include "common.hpp"

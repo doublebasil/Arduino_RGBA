@@ -1,12 +1,6 @@
 #include "FastLED.h"
-#include <Adafruit_AHTX0.h>
-/*     | Arduino UNO | AHT20 (STEMMA QT)
- * SDA | A4          | Yellow wire
- * SCL | A5          | Blue wire         */
 
 #include "common.hpp"
-
-#include "temperature_sensor.hpp"
 
 #include "state_abstract.hpp"
 #include "state_off.hpp"
@@ -49,8 +43,6 @@ void setup()
     FastLED.addLeds<NEOPIXEL, LED_STRIP_DATA_PIN>(led_strip_leds, LED_STRIP_NUM_LEDS);
     FastLED.addLeds<NEOPIXEL, FRONT_FANS_DATA_PIN>(front_fans_leds, FRONT_FANS_NUM_LEDS);
 
-    init_temperature_sensor();
-
     // Serial.begin(9600);
 }
 
@@ -87,8 +79,6 @@ void system_update(void)
 
     static button_state_t current_button_state;
     static button_state_t previous_button_state = button_not_pressed;
-
-    update_temperature_sensor();
 
     current_button_state = (digitalRead(RESET_BUTTON_INPUT_PIN) == LOW) ? button_pressed : button_not_pressed;
     if ((current_button_state == button_pressed) && (previous_button_state == button_not_pressed))
