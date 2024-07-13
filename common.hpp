@@ -17,11 +17,7 @@
 #define FAN_SPEED_MEASURE_PIN       ( A5 )
 #define NUM_OF_FAN_READINGS         ( 3 )
 
-#define CPU_COOLER_NUM_LEDS         ( 24 )
-#define CPU_COOLER_INNER_NUM_LEDS   ( 8 )
-#define CPU_COOLER_OUTER_NUM_LEDS   ( 16 )
-#define LED_STRIP_NUM_LEDS          ( 7 )
-#define FRONT_FANS_NUM_LEDS         ( 12 )
+#define FRONT_FANS_NUM_LEDS         ( 5 )
 
 #define DEFAULT_MODE                ( sm_thermal )
 
@@ -30,11 +26,9 @@
 typedef enum
 {
     sm_system_off,
-    sm_static_red,
+    sm_static,
     sm_thermal,
     sm_torrent,
-    sm_lava_lamp,
-    sm_night,
 } system_state_t;
 
 typedef enum

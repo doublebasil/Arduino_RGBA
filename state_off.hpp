@@ -10,7 +10,7 @@ class StateOff : public StateAbstract
 {
 public:
     void button_press_action(void) const override;
-    void get_led_states(CRGB cpu_leds[], CRGB led_strip_leds[], CRGB front_fans_leds[]) const override;
+    void get_led_states(CRGB front_fans_leds[]) const override;
     void check_if_state_should_change(void) const override;
 };
 
