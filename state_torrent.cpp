@@ -1,7 +1,7 @@
 #include "state_torrent.hpp"
 #include "intcos.hpp"
 
-#define ROTATION_DEGREES_PER_SECOND ( 2 )
+#define ROTATION_DEGREES_PER_SECOND ( 10 )
 #define MS_PER_SECOND               ( 1000UL )
 #define DEGREES_PER_ROTATION        ( 360UL )
 

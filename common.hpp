@@ -6,8 +6,6 @@
 
 #define RESET_BUTTON_INPUT_PIN      ( A1 )  // Using the pc case reset button as a button for the Arduino
 
-#define CPU_COOLER_DATA_PIN         ( 12 )
-#define LED_STRIP_DATA_PIN          ( 11 )
 #define FRONT_FANS_DATA_PIN         ( 10 )
 
 #define UPDATE_PERIOD_MS            ( 25 )
@@ -17,9 +15,9 @@
 #define FAN_SPEED_MEASURE_PIN       ( A5 )
 #define NUM_OF_FAN_READINGS         ( 3 )
 
-#define FRONT_FANS_NUM_LEDS         ( 5 )
+#define FRONT_FANS_NUM_LEDS         ( 8 )
 
-#define DEFAULT_MODE                ( sm_thermal )
+#define DEFAULT_MODE                ( sm_torrent )
 
 #include "FastLED.h"
 
