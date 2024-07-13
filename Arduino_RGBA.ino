@@ -1,4 +1,4 @@
-#include "FastLED.h"
+#include "FastLED.h" // FastLED NeoPixel by David Madison
 
 #include "common.hpp"
 
